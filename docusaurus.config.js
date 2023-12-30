@@ -6,8 +6,8 @@ const VersionsArchived = require("./versionsArchived.json");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Halo 文档",
-  tagline: "Halo 的文档站点",
+  title: "Halo 1.x 文档",
+  tagline: "Halo 1.x 的文档站点",
   url: "https://docs.halo.run",
   baseUrl: "/",
   favicon: "img/favicon-96x96.png",
@@ -32,13 +32,7 @@ const config = {
           showLastUpdateAuthor: true,
           remarkPlugins: [math, mermaid],
           rehypePlugins: [katex],
-          lastVersion: "2.11",
-          versions: {
-            current: {
-              label: "2.12.0-SNAPSHOT",
-              path: "2.12.0-SNAPSHOT",
-            },
-          },
+          lastVersion: "1.6",
         },
         blog: false,
         theme: {
@@ -47,24 +41,6 @@ const config = {
         sitemap: {
           changefreq: "weekly",
           priority: 0.5,
-          ignorePatterns: [
-            "/1.4/**",
-            "/1.5/**",
-            "/1.6/**",
-            "/2.0/**",
-            "/2.1/**",
-            "/2.2/**",
-            "/2.3/**",
-            "/2.4/**",
-            "/2.5/**",
-            "/2.6/**",
-          ],
-        },
-        googleAnalytics: {
-          trackingID: "UA-110780416-7",
-        },
-        gtag: {
-          trackingID: "UA-110780416-7",
         },
       }),
     ],
@@ -79,7 +55,7 @@ const config = {
         },
       },
       navbar: {
-        title: "Halo 文档",
+        title: "Halo 1.x 文档",
         logo: {
           alt: "Halo Logo",
           src: "https://halo.run/upload/2021/03/Adaptive256-463ca9b92e2d40268431018c07735842.png",
@@ -98,6 +74,10 @@ const config = {
             position: "right",
             dropdownActiveClassDisabled: true,
             dropdownItemsAfter: [
+              {
+                label: "Halo 2.x",
+                href: "https://docs.halo.run",
+              },
               ...Object.entries(VersionsArchived).map(
                 ([versionName, versionUrl]) => ({
                   label: versionName,
@@ -182,128 +162,16 @@ const config = {
         theme: darkCodeTheme,
         darkTheme: darkCodeTheme,
       },
-      algolia: {
-        apiKey: "739f2a55c6d13d93af146c22a4885669",
-        indexName: "docs",
-        contextualSearch: true,
-        appId: "OG53LY1OQH",
-      },
       zoom: {
         selector: ".markdown :not(a) > img",
       },
     }),
-  plugins: [
-    require.resolve("docusaurus-plugin-image-zoom"),
-    [
-      "@docusaurus/plugin-client-redirects",
-      {
-        redirects: [
-          {
-            to: "/1.6/getting-started/install/linux",
-            from: [
-              "/zh/install",
-              "/install",
-              "/zh/install/index",
-              "/install/index",
-              "/zh/install/linux",
-              "/install/linux",
-            ],
-          },
-          {
-            to: "/getting-started/install/docker",
-            from: ["/zh/install/docker", "/install/docker"],
-          },
-          {
-            to: "/1.6/getting-started/install/other/bt-panel",
-            from: ["/zh/install/bt-panel", "/install/bt-panel"],
-          },
-          {
-            to: "/1.6/getting-started/install/other/tencent-cloudbase",
-            from: [
-              "/zh/install/tencent-cloudbase",
-              "/install/tencent-cloudbase",
-            ],
-          },
-          {
-            to: "/getting-started/prepare",
-            from: ["/zh/install/prepare", "/install/prepare"],
-          },
-          {
-            to: "/getting-started/config",
-            from: ["/zh/install/config", "/install/config"],
-          },
-          {
-            to: "/1.6/getting-started/upgrade",
-            from: ["/zh/install/upgrade", "/install/upgrade"],
-          },
-          {
-            to: "/getting-started/downloads",
-            from: ["/zh/install/downloads", "/install/downloads"],
-          },
-          {
-            to: "/user-guide/backup-migration",
-            from: ["/zh/user-guide/backup-migration"],
-          },
-          {
-            to: "/user-guide/markdown",
-            from: ["/zh/user-guide/markdown"],
-          },
-          {
-            to: "/developer-guide/core/structure",
-            from: ["/zh/developer-guide/core", "/developer-guide/core"],
-          },
-          {
-            to: "/developer-guide/theme/prepare",
-            from: ["/zh/developer-guide/theme", "/developer-guide/theme"],
-          },
-          {
-            to: "/contribution/issue",
-            from: ["/zh/contribution/issue"],
-          },
-          {
-            to: "/contribution/pr",
-            from: ["/zh/contribution/pr"],
-          },
-        ],
-        createRedirects(existingPath) {
-          if (existingPath.startsWith("/1.5/")) {
-            return [
-              existingPath.replace("/1.5/", "/1.5.4/"),
-              existingPath.replace("/1.5/", "/1.5.3/"),
-              existingPath.replace("/1.5/", "/1.5.2/"),
-              existingPath.replace("/1.5/", "/1.5.1/"),
-              existingPath.replace("/1.5/", "/1.5.0/"),
-            ];
-          }
-          if (existingPath.startsWith("/1.4/")) {
-            return [existingPath.replace("/1.4/", "/1.4.17/")];
-          }
-          if (existingPath.startsWith("/2.12.0-SNAPSHOT/")) {
-            return [
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.0.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.1.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.2.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.3.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.4.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.5.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.6.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.7.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.8.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.9.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.10.0-SNAPSHOT/"),
-              existingPath.replace("/2.12.0-SNAPSHOT/", "/2.11.0-SNAPSHOT/"),
-            ];
-          }
-          return undefined;
-        },
-      },
-    ],
-  ],
+  plugins: [require.resolve("docusaurus-plugin-image-zoom")],
   scripts: [
     {
       src: "https://analytics.halo.run/script.js",
       async: true,
-      "data-website-id": "f9995c32-81e9-4e07-91f2-c276a0d63c9f",
+      "data-website-id": "91ecb9ed-2c23-4f27-a413-530da433e0c2",
     },
   ],
   stylesheets: [

@@ -75,10 +75,7 @@
     {
       "type": "category",
       "label": "参与贡献",
-      "items": [
-        "contribution/issue",
-        "contribution/pr"
-      ]
+      "items": ["contribution/issue", "contribution/pr"]
     },
     "about"
   ]

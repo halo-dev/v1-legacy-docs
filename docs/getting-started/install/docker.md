@@ -1,90 +1,112 @@
 ---
-title: 使用 Docker 部署
+title: 使用 Docker 部署 Halo
 description: 使用 Docker 部署
 ---
-
-import DockerArgs from "./slots/docker-args.md"
 
 :::info
 在继续操作之前，我们推荐您先阅读[《写在前面》](../prepare)，这可以快速帮助你了解 Halo。
 :::
 
-:::caution
-此文档仅提供使用默认 H2 数据库的 Docker 运行方式，主要用于体验和测试，在生产环境我们不推荐使用 H2 数据库，这可能因为操作不当导致数据文件损坏。如果因为某些原因（如内存不足以运行独立数据库）必须要使用，建议按时[备份数据](../../user-guide/backup.md)。
-
-如果需要使用其他数据库部署，我们推荐使用 Docker Compose 部署：[使用 Docker Compose 部署](./docker-compose)
-:::
-
-## 环境搭建
-
-- Docker 安装文档：<https://docs.docker.com/engine/install/>
-
-:::tip
-我们推荐按照 Docker 官方文档安装 Docker，因为部分 Linux 发行版软件仓库中的 Docker 版本可能过旧。
-:::
-
 ## 使用 Docker 镜像
 
-可用的 Halo 2.11 的 Docker 镜像：
+Halo 在 Docker Hub 上发布的镜像为 [halohub/halo](https://hub.docker.com/r/halohub/halo)
 
-- [halohub/halo](https://hub.docker.com/r/halohub/halo)
-- [ghcr.io/halo-dev/halo](https://github.com/halo-dev/halo/pkgs/container/halo)
+1. 创建 [工作目录](../prepare#工作目录)
 
-:::info 注意
-目前 Halo 2 并未更新 Docker 的 latest 标签镜像，主要因为 Halo 2 不兼容 1.x 版本，防止使用者误操作。我们推荐使用固定版本的标签，比如 `halohub/halo:2.11` 或者 `halohub/halo:2.11.0`。
+```bash
+mkdir ~/.halo && cd ~/.halo
+```
 
-- `halohub/halo:2.11`：表示最新的 2.11.x 版本，即每次发布 patch 版本都会同时更新 `halohub/halo:2.11` 镜像。
-- `halohub/halo:2.11.0`：表示一个具体的版本。
+2. 下载示例配置文件到 [工作目录](../prepare#工作目录)
 
-后续文档以 `halohub/halo:2.11` 为例。
+```bash
+wget https://dl.halo.run/config/application-template.yaml -O ./application.yaml
+```
+
+3. 编辑配置文件，配置数据库或者端口等，如需配置请参考 [配置参考](../config)
+
+```bash
+vim application.yaml
+```
+
+4. 拉取最新的 Halo 镜像
+
+```bash
+docker pull halohub/halo:1.6.0
+```
+
+:::info
+查看最新版本镜像：<https://hub.docker.com/r/halohub/halo> ，我们推荐使用具体版本号的镜像，但也提供了 `latest` 标签的镜像，它始终是最新的。
 :::
 
-1. 创建容器
+5. 创建容器
 
-    ```bash
-    docker run -it -d --name halo -p 8090:8090 -v ~/.halo2:/root/.halo2 halohub/halo:2.11
-    ```
+```bash
+docker run -it -d --name halo -p 8090:8090 -v ~/.halo:/root/.halo --restart=unless-stopped halohub/halo:1.6.0
+```
 
-    :::info
-    注意：此命令默认使用自带的 H2 Database 数据库。如需使用 PostgreSQL，请参考：[使用 Docker Compose 部署](./docker-compose)
-    :::
+:::info
+注意：此命令默认使用自带的 H2 Database 数据库。如需使用 MySQL，请参考：[使用 Docker 部署 Halo 和 MySQL](./other/docker-mysql)
+:::
 
-    - **-it**：开启输入功能并连接伪终端
-    - **-d**：后台运行容器
-    - **--name**：为容器指定一个名称
-    - **-p**：端口映射，格式为 `主机(宿主)端口:容器端口` ，可在 `application.yaml` 配置。
-    - **-v**：工作目录映射。形式为：`-v 宿主机路径:/root/.halo2`，后者不能修改。
+- **-it：** 开启输入功能并连接伪终端
+- **-d：** 后台运行容器
+- **--name：** 为容器指定一个名称
+- **-p：** 端口映射，格式为 `主机(宿主)端口:容器端口` ，可在 `application.yaml` 配置。
+- **-v：** 工作目录映射。形式为：-v 宿主机路径:/root/.halo，后者不能修改。
+- **--restart：** 建议设置为 `unless-stopped`，在 Docker 启动的时候自动启动 Halo 容器。
 
-    运行参数详解：
+6. 打开 `http://ip:端口号` 即可看到安装引导界面。
 
-    <DockerArgs />
+:::tip
+如果需要配置域名访问，建议先配置好反向代理以及域名解析再进行初始化。如果通过 `http://ip:端口号` 的形式无法访问，请到服务器厂商后台将运行的端口号添加到安全组，如果服务器使用了 Linux 面板，请检查此 Linux 面板是否有还有安全组配置，需要同样将端口号添加到安全组。
+:::
 
-1. 用浏览器访问 `/console` 即可进入 Halo 管理页面，首次启动会进入初始化页面。
+## 反向代理
 
-    :::tip
-    如果需要配置域名访问，建议先配置好反向代理以及域名解析再进行初始化。如果通过 `http://ip:端口号` 的形式无法访问，请到服务器厂商后台将运行的端口号添加到安全组，如果服务器使用了 Linux 面板，请检查此 Linux 面板是否有还有安全组配置，需要同样将端口号添加到安全组。
-    :::
+你可以在下面的反向代理软件中任选一项，我们假设你已经安装好了其中一项，并对其的基本操作有一定了解。
 
-## 升级版本
+### Nginx
 
-1. 备份数据，可以参考 [备份与恢复](../../user-guide/backup.md) 进行完整备份。
-2. 拉取新版本镜像
+```nginx
+upstream halo {
+  server 127.0.0.1:8090;
+}
+server {
+  listen 80;
+  listen [::]:80;
+  server_name www.yourdomain.com;
+  client_max_body_size 1024m;
+  location / {
+    proxy_pass http://halo;
+    proxy_set_header HOST $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  }
+}
+```
 
-  ```bash
-  docker pull halohub/halo:2.11
-  ```
+### Caddy 1.x
 
-3. 停止运行中的容器
+```txt
+https://www.yourdomain.com {
+ gzip
+ tls your@email.com
+ proxy / localhost:8090 {
+  transparent
+ }
+}
+```
 
-  ```bash
-  docker stop halo
-  docker rm halo
-  ```
+### Caddy 2.x
 
-4. 更新 Halo
+```txt
+www.yourdomain.com
 
-  修改版本号后，按照最初安装的方式，重新创建容器即可。
+encode gzip
 
-    ```bash
-    docker run -it -d --name halo -p 8090:8090 -v ~/.halo2:/root/.halo2 halohub/halo:2.11
-    ```
+reverse_proxy 127.0.0.1:8090
+```
+
+以上配置都可以在 <https://github.com/halo-dev/halo-common> 找到。

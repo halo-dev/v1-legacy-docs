@@ -169,9 +169,9 @@ const config = {
   plugins: [require.resolve("docusaurus-plugin-image-zoom")],
   scripts: [
     {
-      src: "https://analytics.halo.run/script.js",
-      async: true,
-      "data-website-id": "91ecb9ed-2c23-4f27-a413-530da433e0c2",
+      src: "https://track.halo.run/api/script.js",
+      defer: true,
+      "data-site-id": "7",
     },
   ],
   stylesheets: [
